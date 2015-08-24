@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_activated" >
+
+    <!-- 需要防止CheckBox抢占ListItem的焦点 -->
+    <CheckBox
+        android:id="@+id/cb_solved_crime_list_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:enabled="false"
+        android:focusable="false"
+        android:gravity="center"
+        android:padding="4dp" />
+
+    <TextView
+        android:id="@+id/tv_title_crime_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/cb_solved_crime_list_item"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="Crime title"
+        android:textStyle="bold" />
+      
+    <TextView
+        android:id="@+id/tv_date_crime_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title_crime_list_item"
+        android:layout_toLeftOf="@id/cb_solved_crime_list_item"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"
+        android:text="Crime date" />
+
+</RelativeLayout>

@@ -1,0 +1,40 @@
+package com.sunny.criminalintent;
+
+import android.graphics.Camera;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+
+public class CrimeCameraFragment extends Fragment {
+	
+	private static final String TAG = "CrimeCameraFragment";
+	
+	private Camera mCamera;
+	
+	private SurfaceView mCrimeSv;
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_crime_camera, container, false);
+		
+		Button mTakeBtn = (Button) view.findViewById(R.id.btn_crime_camera_take_picture);
+		mTakeBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				getActivity().finish();
+			}
+		});
+		
+		mCrimeSv = (SurfaceView) view.findViewById(R.id.sv_crime_camera);
+		
+		return view;
+	}
+
+}
