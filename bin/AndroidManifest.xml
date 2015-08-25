@@ -40,8 +40,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CrimeListActivity" />
         </activity>
+        <!-- 
+        	默认情况下，某个应用的activity只能从自己的应用里启动。将android:exported属性值设
+			为true相当于告诉Android，其他应用也可以启动指定应用的activity。 
+		-->
         <activity
             android:name=".CrimeCameraActivity"
+            android:exported="true"
             android:screenOrientation="landscape"
             android:label="@string/app_name" >
             <!-- 配置父Activity，用于实现层级式导航 -->
