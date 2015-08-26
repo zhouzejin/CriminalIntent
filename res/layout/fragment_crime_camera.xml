@@ -19,7 +19,22 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/take" />
-
     </LinearLayout>
+
+    <!--
+    	设置android:clickable="true"，可以确保FrameLayout组件能够截获 （仅
+		截获但不响应）任何触摸事件。这样，可阻止用户与LinearLayout组件包含的子组件交互，尤
+		其是可以阻止用户再次点击Take!拍照按钮 。
+    -->    <FrameLayout
+        android:id="@+id/fl_crime_camera_progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true" >
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
 </FrameLayout>
