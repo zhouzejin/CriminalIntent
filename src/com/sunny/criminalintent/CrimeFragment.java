@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
@@ -44,6 +45,7 @@ public class CrimeFragment extends Fragment {
 	private Button mDateBtn;
 	private CheckBox mSolvedCb;
 	private ImageButton mPhotoIbtn;
+	private ImageView mPhotoIv;
 	
 	/**
 	 * 附加argument给fragment
@@ -166,6 +168,8 @@ public class CrimeFragment extends Fragment {
 		if (!hasACamera) {
 			mPhotoIbtn.setEnabled(false);
 		}
+		
+		mPhotoIv = (ImageView) view.findViewById(R.id.iv_crime);
 	}
 
 	@Override
@@ -184,7 +188,10 @@ public class CrimeFragment extends Fragment {
 			String filename = data
 					.getStringExtra(CrimeCameraFragment.EXTRA_PHOTO_FILENAME);
 			if (filename != null) {
-				Log.i(TAG, "filename: " + filename);
+				// Log.i(TAG, "filename: " + filename);
+				Photo photo = new Photo(filename);
+				mCrime.setPhoto(photo);
+				Log.i(TAG, "Crime: " + mCrime.getTitle() + "has a photo");
 			}
 		}
 	}
