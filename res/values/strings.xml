@@ -24,6 +24,7 @@
     
     <!-- 上下文菜单菜单 -->
     <string name="delete_crime">Delete Crime</string>
+    <string name="delete_photo">Delete Photo</string>
     
     <!-- CrimeCameraFragment -->
     <string name="take">Take!</string>

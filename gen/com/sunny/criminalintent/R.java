@@ -36,9 +36,10 @@ public final class R {
         public static final int fragment_container=0x7f050001;
         public static final int ibtn_crime=0x7f050004;
         public static final int iv_crime=0x7f050003;
-        public static final int menu_item_delete_crime=0x7f05000e;
-        public static final int menu_item_new_crime=0x7f05000f;
-        public static final int menu_item_show_subtitle=0x7f050010;
+        public static final int menu_item_delete_crime=0x7f05000f;
+        public static final int menu_item_delete_photo=0x7f05000e;
+        public static final int menu_item_new_crime=0x7f050010;
+        public static final int menu_item_show_subtitle=0x7f050011;
         public static final int sv_crime_camera=0x7f050008;
         public static final int tv_date_crime_list_item=0x7f05000d;
         public static final int tv_title_crime_list_item=0x7f05000c;
@@ -52,8 +53,9 @@ public final class R {
         public static final int list_item_crime=0x7f030004;
     }
     public static final class menu {
-        public static final int crime_list_item_context=0x7f080000;
-        public static final int fragment_crime_list=0x7f080001;
+        public static final int crime_item_context=0x7f080000;
+        public static final int crime_list_item_context=0x7f080001;
+        public static final int fragment_crime_list=0x7f080002;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;
@@ -73,6 +75,7 @@ public final class R {
         /**  上下文菜单菜单 
          */
         public static final int delete_crime=0x7f06000c;
+        public static final int delete_photo=0x7f06000d;
         public static final int hide_subtitle=0x7f06000a;
         /**  可选菜单 
          */
@@ -81,7 +84,7 @@ public final class R {
         public static final int subtitle=0x7f06000b;
         /**  CrimeCameraFragment 
          */
-        public static final int take=0x7f06000d;
+        public static final int take=0x7f06000e;
     }
     public static final class style {
         /** 

@@ -70,7 +70,7 @@ public class CrimeListFragment extends ListFragment {
 		// 无法使用。这是因为，在onCreateView(...)方法完成调用并返回视图之前， getListView()
 		// 方法返回的永远是null值。
 		ListView listView = (ListView) view.findViewById(android.R.id.list);
-		// 在API11以下的版本只支持浮动上下文菜单，以上的版本还支持实施上下文菜单(在ActionBar上实现)
+		// 在API11以下的版本只支持浮动上下文菜单，以上的版本还支持操作栏(ActionBar)上的上下文菜单
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 			// Use floating context menus on Froyo and Gingerbread
 			// 默认情况下，长按视图不会触发上下文菜单的创建；
