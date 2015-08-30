@@ -2,21 +2,27 @@ package com.sunny.criminalintent;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -47,6 +53,7 @@ public class CrimeFragment extends Fragment {
 	private static final String DIALOG_IMAGE = "image";
 	private static final int REQUEST_DATE = 0;
 	private static final int REQUEST_PHOTO = 1;
+	private static final int REQUEST_CONTACT = 2;
 	
 	private Crime mCrime;
 	
@@ -55,6 +62,10 @@ public class CrimeFragment extends Fragment {
 	private CheckBox mSolvedCb;
 	private ImageButton mPhotoIbtn;
 	private ImageView mPhotoIv;
+	private Button mReportBtn;
+	private Button mSuspectBtn;
+	
+	private boolean mActionBarStatus; // 记录ActionBar的状态，当设备旋转时使用
 	
 	/**
 	 * 附加argument给fragment
@@ -79,6 +90,10 @@ public class CrimeFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		
 		setHasOptionsMenu(true); // 通知FragmentManager需接收选项菜单方法回调
+		
+		// 设置Activity销毁时保持该fragment实例，即可以保存mActionBarStatus
+		setRetainInstance(true);
+		mActionBarStatus = false;
 		
 		// 直接获取托管Activity中数据，这样破坏了fragment的封装性
 		// 因为这需要fragment必须由某个特定的Activity托管
@@ -107,38 +122,19 @@ public class CrimeFragment extends Fragment {
 		
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) { // 使用浮动上下文菜单
 			registerForContextMenu(mPhotoIv);
-		} else { // 在操作栏(ActionBar)上的上下文菜单
+		} else { // 使用操作栏(ActionBar)上的上下文菜单
 			// 长按删除该图片
 			mPhotoIv.setOnLongClickListener(new View.OnLongClickListener() {
-				
+
 				@Override
 				public boolean onLongClick(View v) {
-					getActivity().startActionMode(new ActionMode.Callback() {
-						
+					v.startActionMode(new ActionMode.Callback() {
+
 						@Override
-						public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-							// TODO Auto-generated method stub
-							return false;
-						}
-						
-						@Override
-						public void onDestroyActionMode(ActionMode mode) {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-							// 创建上下文菜单
-							MenuInflater inflater = mode.getMenuInflater();
-							inflater.inflate(R.menu.crime_item_context, menu);
-							return true;
-						}
-						
-						@Override
-						public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+						public boolean onActionItemClicked(ActionMode mode,
+								MenuItem item) {
 							switch (item.getItemId()) {
-							case R.id.menu_item_delete_photo:		
+							case R.id.menu_item_delete_photo:
 								onDeletePhoto();
 								mode.finish();
 								return true;
@@ -147,12 +143,33 @@ public class CrimeFragment extends Fragment {
 								return false;
 							}
 						}
+
+						@Override
+						public boolean onCreateActionMode(ActionMode mode,
+								Menu menu) {
+							// 创建上下文菜单
+							MenuInflater inflater = mode.getMenuInflater();
+							inflater.inflate(R.menu.crime_item_context, menu);
+							return true;
+						}
+
+						@Override
+						public void onDestroyActionMode(ActionMode mode) {
+							mActionBarStatus = false; // 操作完毕，操作栏处于可选菜单状态
+						}
+
+						@Override
+						public boolean onPrepareActionMode(ActionMode mode,
+								Menu menu) {
+							mActionBarStatus = true; // 操作栏处于操作状态
+							return false;
+						}
 					});
 					return true;
 				}
 			});
 		}
-		
+
 		return view;
 	}
 
@@ -242,6 +259,63 @@ public class CrimeFragment extends Fragment {
 				ImageFragment.newInstance(path).show(fm, DIALOG_IMAGE);
 			}
 		});
+		
+		mReportBtn = (Button) view.findViewById(R.id.btn_crime_report);
+		mReportBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// 使用隐式Intent启动Activity
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+				intent.putExtra(Intent.EXTRA_SUBJECT, 
+						getString(R.string.crime_report_subject));
+				intent = Intent.createChooser(intent, getString(R.string.send_report));
+				if (checkIntentSafe(intent))
+					startActivity(intent);
+			}
+		});
+		
+		mSuspectBtn = (Button) view.findViewById(R.id.btn_crime_suspect);
+		mSuspectBtn.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_PICK, 
+						ContactsContract.Contacts.CONTENT_URI);
+				if (checkIntentSafe(intent))
+					startActivityForResult(intent, REQUEST_CONTACT);
+			}
+		});
+		
+		if (mCrime.getSuspect() != null) {
+			mSuspectBtn.setText(mCrime.getSuspect());
+		}
+	}
+	
+	/**
+	 * 检查系统中是否有能响应该隐式Intent的Activity.
+	 * @param intent
+	 */
+	private boolean checkIntentSafe(Intent intent) {
+		PackageManager pm = getActivity().getPackageManager();
+		List<ResolveInfo> activities = pm.queryIntentActivities(intent, 0);
+		boolean isIntentSafe = activities.size() > 0;
+		return isIntentSafe;
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		
+		// 当设备旋转，操作栏状态与旋转前一致
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			if (mActionBarStatus) { // 旋转前操作栏处于操作状态
+				// 必须在View都创建完毕后调用才有效果
+				mPhotoIv.performLongClick(); // 触发长按事件，使操作栏显示操作状态
+			}
+		}
 	}
 
 	@Override
@@ -271,6 +345,31 @@ public class CrimeFragment extends Fragment {
 				Log.i(TAG, "Crime: " + mCrime.getTitle() + " has a photo");
 				showPhoto();
 			}
+		} else if (requestCode == REQUEST_CONTACT) {
+			Uri contactUri = data.getData();
+			
+			// Specify which fields you want your query to return values for
+			String[] queryFields = new String[] {
+					ContactsContract.Contacts.DISPLAY_NAME
+			};
+			
+			// Perform your query - the conntactUri is like a "where" clause here
+			Cursor cursor = getActivity().getContentResolver()
+					.query(contactUri, queryFields, null, null, null);
+			
+			// Double-check that you actually got results
+			if (cursor.getCount() == 0) {
+				cursor.close();
+				return;
+			}
+			
+			// Pull out the first column of the first row of data
+			// that is your suspect's name.
+			cursor.moveToFirst();
+			String suspect = cursor.getString(0);
+			mCrime.setSuspect(suspect);
+			mSuspectBtn.setText(suspect);
+			cursor.close();
 		}
 	}
 	
@@ -365,6 +464,31 @@ public class CrimeFragment extends Fragment {
 			Toast.makeText(getActivity(), "Delete Picture Success!", 
 					Toast.LENGTH_LONG).show();
 		}
+	}
+	
+	private String getCrimeReport() {
+		String solvedString = null;
+		if (mCrime.isSolved()) {
+			solvedString = getString(R.string.crime_report_solved);
+		} else {
+			solvedString = getString(R.string.crime_report_unsolved);
+		}
+		
+		String dateFormatString = "EEE, MMM dd";
+		String dateString = DateFormat.format(dateFormatString, mCrime.getDate()).toString();
+		
+		String suspect = mCrime.getSuspect();
+		if (suspect == null) {
+			suspect = getString(R.string.crime_report_no_suspect);
+		} else {
+			// 格式化字符串
+			suspect = getString(R.string.crime_report_subject, suspect);
+		}
+		
+		String report = getString(R.string.crime_report, 
+				mCrime.getTitle(), dateString, solvedString, suspect);
+		
+		return report;
 	}
 
 }

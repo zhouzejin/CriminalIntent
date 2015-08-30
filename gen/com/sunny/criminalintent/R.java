@@ -26,23 +26,25 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int btn_crime_camera_take_picture=0x7f050009;
+        public static final int btn_crime_camera_take_picture=0x7f05000b;
         public static final int btn_crime_date=0x7f050006;
+        public static final int btn_crime_report=0x7f050009;
+        public static final int btn_crime_suspect=0x7f050008;
         public static final int cb_crime_solved=0x7f050007;
-        public static final int cb_solved_crime_list_item=0x7f05000b;
+        public static final int cb_solved_crime_list_item=0x7f05000d;
         public static final int dialog_date_datePicker=0x7f050002;
         public static final int edt_crime_title=0x7f050005;
-        public static final int fl_crime_camera_progressContainer=0x7f05000a;
+        public static final int fl_crime_camera_progressContainer=0x7f05000c;
         public static final int fragment_container=0x7f050001;
         public static final int ibtn_crime=0x7f050004;
         public static final int iv_crime=0x7f050003;
-        public static final int menu_item_delete_crime=0x7f05000f;
-        public static final int menu_item_delete_photo=0x7f05000e;
-        public static final int menu_item_new_crime=0x7f050010;
-        public static final int menu_item_show_subtitle=0x7f050011;
-        public static final int sv_crime_camera=0x7f050008;
-        public static final int tv_date_crime_list_item=0x7f05000d;
-        public static final int tv_title_crime_list_item=0x7f05000c;
+        public static final int menu_item_delete_crime=0x7f050011;
+        public static final int menu_item_delete_photo=0x7f050010;
+        public static final int menu_item_new_crime=0x7f050012;
+        public static final int menu_item_show_subtitle=0x7f050013;
+        public static final int sv_crime_camera=0x7f05000a;
+        public static final int tv_date_crime_list_item=0x7f05000f;
+        public static final int tv_title_crime_list_item=0x7f05000e;
         public static final int vp_crime=0x7f050000;
     }
     public static final class layout {
@@ -61,30 +63,39 @@ public final class R {
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
         public static final int crime_details_label=0x7f060004;
+        public static final int crime_report=0x7f060008;
+        public static final int crime_report_no_suspect=0x7f06000b;
+        public static final int crime_report_solved=0x7f060009;
+        public static final int crime_report_subject=0x7f06000d;
+        public static final int crime_report_suspect=0x7f06000c;
+        public static final int crime_report_text=0x7f060007;
+        public static final int crime_report_unsolved=0x7f06000a;
         public static final int crime_solved_label=0x7f060005;
+        public static final int crime_suspect_text=0x7f060006;
         /**  CrimeFragment 
          */
         public static final int crime_title_hint=0x7f060002;
         public static final int crime_title_label=0x7f060003;
         /**  CrimeListFragment 
          */
-        public static final int crimes_title=0x7f060006;
+        public static final int crimes_title=0x7f06000f;
         /**  DatePickerFragment 
          */
-        public static final int date_picker_title=0x7f060007;
+        public static final int date_picker_title=0x7f060010;
         /**  上下文菜单菜单 
          */
-        public static final int delete_crime=0x7f06000c;
-        public static final int delete_photo=0x7f06000d;
-        public static final int hide_subtitle=0x7f06000a;
+        public static final int delete_crime=0x7f060015;
+        public static final int delete_photo=0x7f060016;
+        public static final int hide_subtitle=0x7f060013;
         /**  可选菜单 
          */
-        public static final int new_crime=0x7f060008;
-        public static final int show_subtitle=0x7f060009;
-        public static final int subtitle=0x7f06000b;
+        public static final int new_crime=0x7f060011;
+        public static final int send_report=0x7f06000e;
+        public static final int show_subtitle=0x7f060012;
+        public static final int subtitle=0x7f060014;
         /**  CrimeCameraFragment 
          */
-        public static final int take=0x7f06000e;
+        public static final int take=0x7f060017;
     }
     public static final class style {
         /** 

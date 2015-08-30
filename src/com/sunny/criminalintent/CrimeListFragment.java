@@ -139,7 +139,7 @@ public class CrimeListFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// Crime crime = (Crime) (getListAdapter()).getItem(position);
 		Crime crime = ((CrimeAdapter)getListAdapter()).getItem(position);
-		// Log.d(TAG, crime.getTitle() + "was click!");
+		Log.d(TAG, crime.getTitle() + "was click!");
 		
 		// Start CrimeActivity
 		// Intent intent = new Intent(getActivity(), CrimeActivity.class);
