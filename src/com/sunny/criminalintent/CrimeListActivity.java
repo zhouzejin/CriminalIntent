@@ -9,4 +9,9 @@ public class CrimeListActivity extends SingleCrimeActivity {
 		return new CrimeListFragment();
 	}
 
+	@Override
+	protected int getLayoutResId() {
+		return R.layout.activity_towpane;
+	}
+
 }
