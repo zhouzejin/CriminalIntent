@@ -3,6 +3,7 @@ package com.sunny.criminalintent;
 import java.util.ArrayList;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,32 @@ public class CrimeListFragment extends ListFragment {
 	
 	private ArrayList<Crime> mCrimes;
 	private boolean mSubtitleVisible; // 记录子标题的状态，当设备旋转时使用
+	private Callbacks mCallbacks;
+	
+	/**
+	 * Required interface for hosting activities.
+	 * 该接口用适配手机和平板的CrimeFragment界面显示
+	 */
+	public interface Callbacks {
+		void onCrimeSelected(Crime crime);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		// 在没有类型安全检查的情况下，使用了强制类型转换，
+		// 因此，托管activity必须实现CrimeListFragment.Callbacks接口。
+		mCallbacks = (Callbacks) activity;
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		// 将变量清空的原因是，随后再也无法访问该activity或指望该activity继续存在了。
+		mCallbacks = null;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -143,10 +170,14 @@ public class CrimeListFragment extends ListFragment {
 		
 		// Start CrimeActivity
 		// Intent intent = new Intent(getActivity(), CrimeActivity.class);
+		
 		// Start CrimePagerActivity with this crime
-		Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
+		/*Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
 		intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-		startActivity(intent);
+		startActivity(intent);*/
+		
+		// 以适配手机和平板的方式展示CrimeFragment
+		mCallbacks.onCrimeSelected(crime);
 	}
 	
 	private class CrimeAdapter extends ArrayAdapter<Crime> {
@@ -218,9 +249,12 @@ public class CrimeListFragment extends ListFragment {
 			Crime crime = new Crime();
 			CrimeLab.get(getActivity()).addCrime(crime);
 			
-			Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
+			/*Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
 			intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-			startActivity(intent);
+			startActivity(intent);*/
+			// 以适配手机和平板的方式展示CrimeFragment
+			((CrimeAdapter)getListAdapter()).notifyDataSetChanged(); // 平板界面需要刷新列表
+			mCallbacks.onCrimeSelected(crime);
 			
 			return true;
 		
@@ -258,6 +292,13 @@ public class CrimeListFragment extends ListFragment {
 		}
 
 		return super.onContextItemSelected(item);
+	}
+	
+	/**
+	 * 更新UI，用于CrimeFragment中接口的回调
+	 */
+	public void updateUI() {
+		((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
 	}
 
 }

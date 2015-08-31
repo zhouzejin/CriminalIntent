@@ -66,7 +66,30 @@ public class CrimeFragment extends Fragment {
 	private Button mSuspectBtn;
 	
 	private boolean mActionBarStatus; // 记录ActionBar的状态，当设备旋转时使用
+	private Callbacks mCallbacks;
 	
+	/**
+	 * Required interface for hosting activities
+	 * 该接口用于平板设备上实现CrimeListFragment的动态刷新
+	 */
+	public interface Callbacks {
+		void onCrimeUpdated(Crime crime);
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		mCallbacks = (Callbacks) activity;
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		
+		mCallbacks = null;
+	}
+
 	/**
 	 * 附加argument给fragment
 	 * 
@@ -182,6 +205,8 @@ public class CrimeFragment extends Fragment {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				mCrime.setTitle(s.toString());
+				mCallbacks.onCrimeUpdated(mCrime); // 平板设备更新UI
+				getActivity().setTitle(mCrime.getTitle()); // 更新标题
 			}
 			
 			@Override
@@ -219,6 +244,7 @@ public class CrimeFragment extends Fragment {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				mCrime.setSolved(isChecked);
+				mCallbacks.onCrimeUpdated(mCrime);
 			}
 		});
 		
@@ -328,6 +354,7 @@ public class CrimeFragment extends Fragment {
 			Date date = (Date) data
 					.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
 			mCrime.setDate(date);
+			mCallbacks.onCrimeUpdated(mCrime);
 			updateDate();
 		} else if (requestCode == REQUEST_PHOTO) {
 			// Create a new Photo object and attach it to the crime
@@ -343,6 +370,7 @@ public class CrimeFragment extends Fragment {
 				Photo photo = new Photo(filename);
 				mCrime.setPhoto(photo);
 				Log.i(TAG, "Crime: " + mCrime.getTitle() + " has a photo");
+				mCallbacks.onCrimeUpdated(mCrime);
 				showPhoto();
 			}
 		} else if (requestCode == REQUEST_CONTACT) {
@@ -368,6 +396,7 @@ public class CrimeFragment extends Fragment {
 			cursor.moveToFirst();
 			String suspect = cursor.getString(0);
 			mCrime.setSuspect(suspect);
+			mCallbacks.onCrimeUpdated(mCrime);
 			mSuspectBtn.setText(suspect);
 			cursor.close();
 		}
